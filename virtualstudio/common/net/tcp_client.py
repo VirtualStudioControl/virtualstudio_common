@@ -46,6 +46,8 @@ class TCPClient(Thread):
                 if complete:
                     self.onMessageRecv(self.messageStub)
                     self.messageStub = None
+        except ConnectionAbortedError:
+            pass # Socket closed by another thread
         finally:
             self.sock.close()
 
@@ -57,3 +59,6 @@ class TCPClient(Thread):
             messages = disassembleMessage(message)
             for packet in messages:
                 self.sock.sendall(packet)
+
+    def closeConnection(self):
+        self.sock.close()

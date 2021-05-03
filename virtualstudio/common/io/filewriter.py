@@ -43,12 +43,28 @@ def readFileLinesStripped(path):
 
 def readFile(path):
     """
-    Read the file Line by Line and strip each line of leading and trailing whitespaces
+    Read the complete file
 
     :param path: Path to read from
-    :return: a list of stripped Lines
+    :return: the data of the file
     """
     f = open(path, "r")
+    result = ""
+    try:
+        result = f.read()
+    finally:
+        f.close()
+
+    return result
+
+def readFileBinary(path):
+    """
+    Read the complete file
+
+    :param path: Path to read from
+    :return: the data of the file
+    """
+    f = open(path, "rb")
     result = ""
     try:
         result = f.read()

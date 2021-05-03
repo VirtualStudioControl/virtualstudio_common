@@ -8,7 +8,7 @@ class TCPServer(Thread):
         super().__init__()
         self.listeningAddress = listenAddress
         self.port = port
-        self.running = True
+        self.running = False
 
         self.flags = socket.NI_NUMERICHOST | socket.NI_NUMERICSERV
 
@@ -23,6 +23,8 @@ class TCPServer(Thread):
         self.running = False
 
     def run(self) -> None:
+
+        self.running = True
         # create an instance of socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -30,9 +32,8 @@ class TCPServer(Thread):
         # bind the socket to its host and port
         self.sock.bind((self.listeningAddress, self.port))
 
-        self.sock.listen(1)
-
         while self.running:
+            self.sock.listen(1)
             self.connection, clientAddress = self.sock.accept()
             self.messageStub = None
             address, port = socket.getnameinfo(clientAddress, self.flags)
@@ -45,12 +46,14 @@ class TCPServer(Thread):
                     self.messageStub, complete = assembleMessage(self.messageStub, data)
 
                     if complete:
+                        print("Message:", self.messageStub)
                         self.onMessageRecv(self.messageStub)
                         self.messageStub = None
 
             except ConnectionResetError:
                 pass # Ignore
             finally:
+                print("Closing Connection")
                 self.connection.close()
 
     def onMessageRecv(self, message: bytes):

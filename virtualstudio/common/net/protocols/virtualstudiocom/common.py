@@ -3,7 +3,10 @@ from . import constants as consts
 MESSAGE_ID = 0
 
 def getMessageID() -> str:
-    return "MSGID-{}".format(MESSAGE_ID)
+    global MESSAGE_ID
+    msgid = "MSGID-{}".format(MESSAGE_ID)
+    MESSAGE_ID = MESSAGE_ID +1
+    return msgid
 
 def createRequest(messageType, args=None):
     if args is None:
