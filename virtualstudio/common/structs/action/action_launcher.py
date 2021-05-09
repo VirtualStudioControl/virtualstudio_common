@@ -1,9 +1,6 @@
 from typing import List, Tuple
 
-CONTROL_TYPE_BUTTON = "BUTTON"
-CONTROL_TYPE_IMAGE_BUTTON = "IMAGE_BUTTON"
-CONTROL_TYPE_FADER = "FADER"
-CONTROL_TYPE_ROTARY_ENCODER = "ROTARY_ENCODER"
+from .abstract_action import *
 
 
 class ActionLauncher:
@@ -46,7 +43,8 @@ class ActionLauncher:
     def getActionUI(self, control):
         return ""
 
+    # endregion
+
     def getActionForControl(self, control):
         pass
 
-    #endregion

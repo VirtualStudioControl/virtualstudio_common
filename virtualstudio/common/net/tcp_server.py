@@ -46,14 +46,12 @@ class TCPServer(Thread):
                     self.messageStub, complete = assembleMessage(self.messageStub, data)
 
                     if complete:
-                        print("Message:", self.messageStub)
                         self.onMessageRecv(self.messageStub)
                         self.messageStub = None
 
             except ConnectionResetError:
                 pass # Ignore
             finally:
-                print("Closing Connection")
                 self.connection.close()
 
     def onMessageRecv(self, message: bytes):
