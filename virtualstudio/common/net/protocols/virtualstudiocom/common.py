@@ -11,5 +11,5 @@ def getMessageID() -> str:
 def createRequest(messageType, args=None):
     if args is None:
         args = {}
-    request = {consts.INTERN_REQUEST_TYPE: messageType, consts.INTERN_MESSAGE_ID: getMessageID(), "payload": args}
+    request = {consts.INTERN_REQUEST_TYPE: messageType, consts.INTERN_MESSAGE_ID: getMessageID(), **args}
     return request

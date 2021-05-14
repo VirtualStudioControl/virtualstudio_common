@@ -27,6 +27,9 @@ class HardwareWrapper:
     def getType(self):
         return HARDWARE_TYPE_UNKNOWN
 
+    def getHardwareFamily(self):
+        return "{} {}".format(self.manufacturer, self.name)
+
     def bindProfile(self, profile):
         pass
 

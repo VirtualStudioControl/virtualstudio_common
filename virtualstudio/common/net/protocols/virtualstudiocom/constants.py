@@ -3,6 +3,8 @@ INTERN_MESSAGE_ID = "messageid"
 INTERN_MESSAGE_PAYLOAD = "payload"
 
 REQ_ACTION_LIST = "listActions"
-REQ_ACTION_ICON = "getActionIcon"
 
 REQ_DEVICE_LIST = "listDevices"
+
+REQ_PROFILE_SET = "getProfileSet"
+REQ_PROFILE_SET_PARAM_DEVICE = "deviceID"
