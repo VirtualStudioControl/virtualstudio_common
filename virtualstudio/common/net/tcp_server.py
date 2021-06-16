@@ -42,12 +42,11 @@ class TCPServer(Thread):
                     data = self.connection.recv(self.buffersize) # 16 kb buffer
                     if len(data) < 4:
                         continue
+                    print("Message Recieved: {:08X} {}".format(getInt(data, start=0), str(data[4:])))
+                    self.messageStub, messages = assembleMessage(self.messageStub, data)
 
-                    self.messageStub, complete = assembleMessage(self.messageStub, data)
-
-                    if complete:
-                        self.onMessageRecv(self.messageStub)
-                        self.messageStub = None
+                    for msg in messages:
+                        self.onMessageRecv(msg)
 
             except ConnectionResetError:
                 pass # Ignore
@@ -61,4 +60,5 @@ class TCPServer(Thread):
         if self.connection is not None:
             messages = disassembleMessage(message)
             for packet in messages:
+                print("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
                 self.connection.sendall(packet)

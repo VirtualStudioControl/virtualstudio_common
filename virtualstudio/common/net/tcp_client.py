@@ -41,11 +41,12 @@ class TCPClient(Thread):
                 data = self.sock.recv(16384) # 16 kb buffer
                 if len(data) < 4:
                     continue
-                self.messageStub, complete = assembleMessage(self.messageStub, data)
 
-                if complete:
-                    self.onMessageRecv(self.messageStub)
-                    self.messageStub = None
+                self.messageStub, messages = assembleMessage(self.messageStub, data)
+
+                for msg in messages:
+                    self.onMessageRecv(msg)
+
         except ConnectionAbortedError:
             pass # Socket closed by another thread
         finally:

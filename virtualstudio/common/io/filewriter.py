@@ -10,16 +10,16 @@ def writeFile (path, content, mode="w"):
     :param mode: File Open mode, 'w' for write, 'a' for append
     :return: None
     """
+    dirname = os.path.dirname(path)
+    if len(dirname.strip()) > 0 and not os.path.exists(dirname):
+        try:
+            os.makedirs(dirname)
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
     f = open(path, mode)
     try:
-        dirname = os.path.dirname(path)
-        if len(dirname.strip()) > 0 and not os.path.exists(dirname):
-            try:
-                os.makedirs(dirname)
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
-
         f.write(content)
     finally:
         f.close()

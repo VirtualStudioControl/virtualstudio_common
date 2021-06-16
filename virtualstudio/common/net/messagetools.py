@@ -17,11 +17,21 @@ def disassembleMessage(message : bytes, buffersize=16384) -> List[bytes]:
         currentPos += (buffersize - 4)
     return messages
 
-def assembleMessage(messageStub: Optional[bytes], packet) -> Tuple[bytes, bool]:
-    if messageStub is None:
-        messageStub = bytes()
-    messageLen = getInt(packet, start=0)
-    messageStub += packet[4:]
-    return messageStub, (len(messageStub) == messageLen)
+def assembleMessage(messageStub: Optional[bytes], packet) -> Tuple[bytes, List[bytes]]:
+    processed = 0
+    messages = []
+    while processed < len(packet):
+        if messageStub is None:
+            messageStub = bytes()
+        messageLen = getInt(packet, start=processed)
+        processed += 4
+        msgEnd = min(messageLen + processed, len(packet))
+        messageStub += packet[processed:msgEnd]
+        if messageLen + processed <= len(packet):
+            messages.append(messageStub)
+            messageStub = None
+        processed = msgEnd
+
+    return messageStub, messages
 
 

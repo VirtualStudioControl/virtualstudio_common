@@ -2,6 +2,8 @@ from typing import List, Tuple
 
 from .abstract_action import *
 
+UI_TYPE_INVALID = "INVALID"
+UI_TYPE_QTUI = "QTUI"
 
 class ActionLauncher:
 
@@ -40,8 +42,11 @@ class ActionLauncher:
         }
         return result
 
-    def getActionUI(self, control):
-        return ""
+    def getActionStateCount(self, controlType: str) -> int:
+        return 1
+
+    def getActionUI(self, controlType: str) -> Tuple[str, str]:
+        return UI_TYPE_INVALID, ""
 
     # endregion
 
