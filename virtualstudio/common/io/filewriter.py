@@ -57,6 +57,29 @@ def readFile(path):
 
     return result
 
+def writeFileBinary (path, content, mode="wb"):
+    """
+    Writes content to a file at the given path
+
+    :param path: Path of the file to write
+    :param content: Content to write to the file
+    :param mode: File Open mode, 'w' for write, 'a' for append
+    :return: None
+    """
+    dirname = os.path.dirname(path)
+    if len(dirname.strip()) > 0 and not os.path.exists(dirname):
+        try:
+            os.makedirs(dirname)
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    f = open(path, mode)
+    try:
+        f.write(content)
+    finally:
+        f.close()
+
 def readFileBinary(path):
     """
     Read the complete file

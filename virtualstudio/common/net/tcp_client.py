@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Lock
 import socket
 
 from.messagetools import *
@@ -15,6 +15,8 @@ class TCPClient(Thread):
         self.sock = None
         self.timeout: Optional[float] = None
         self.running = False
+
+        self.sendLock = Lock()
 
         self.messageStub = None
 
@@ -38,14 +40,15 @@ class TCPClient(Thread):
         self.messageStub = None
         try:
             while self.running:
-                data = self.sock.recv(16384) # 16 kb buffer
-                if len(data) < 4:
+                length = self.sock.recv(4)  # 16 kb buffer
+                if len(length) < 4:
                     continue
+                data = self.sock.recv(getInt(length, start=0))
+                print("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
+                self.onMessageRecv(data)
 
-                self.messageStub, messages = assembleMessage(self.messageStub, data)
-
-                for msg in messages:
-                    self.onMessageRecv(msg)
+                #for msg in messages:
+                #    self.onMessageRecv(msg)
 
         except ConnectionAbortedError:
             pass # Socket closed by another thread
@@ -58,8 +61,12 @@ class TCPClient(Thread):
     def sendMessage(self, message: bytes):
         if self.sock is not None:
             messages = disassembleMessage(message)
-            for packet in messages:
-                self.sock.sendall(packet)
+            self.sendLock.acquire()
+            try:
+                for packet in messages:
+                    self.sock.sendall(packet)
+            finally:
+                self.sendLock.release()
 
     def closeConnection(self):
         self.sock.close()

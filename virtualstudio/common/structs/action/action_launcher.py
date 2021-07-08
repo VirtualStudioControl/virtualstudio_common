@@ -7,6 +7,9 @@ UI_TYPE_QTUI = "QTUI"
 
 class ActionLauncher:
 
+    def __init__(self):
+        self.ACTIONS: Dict[str, type] = {}
+
     #region Metadata
 
     def getName(self) -> str:
@@ -50,6 +53,7 @@ class ActionLauncher:
 
     # endregion
 
-    def getActionForControl(self, control):
-        pass
+    def getActionForControl(self, device, controlID, actionInfo: ActionInfo):
+        controlType = ""
+        return self.ACTIONS[controlType](device, controlID, actionInfo)
 

@@ -1,8 +1,13 @@
+from typing import Any
+
 STATE_VAR = "%STATE%"
 
 KEY_STATE_BUTTON_LEDSTATE = ["states", STATE_VAR, "button", "ledstate"]
 
 KEY_STATE_IMAGEBUTTON_IMAGE = ["states", STATE_VAR, "imagebutton", "image"]
+KEY_STATE_IMAGEBUTTON_IMAGE_SRC = ["states", STATE_VAR, "imagebutton", "imagesrc"]
+KEY_STATE_IMAGEBUTTON_IMAGE_BASE = ["states", STATE_VAR, "imagebutton", "imagebase"]
+
 KEY_STATE_IMAGEBUTTON_DEVICESPECIFIC = ["states", STATE_VAR, "imagebutton", "devicespecific"]
 
 KEY_STATE_IMAGEBUTTON_TEXT_SHOW = ["states", STATE_VAR, "imagebutton", "text", "show"]
@@ -16,7 +21,7 @@ KEY_STATE_IMAGEBUTTON_TEXT_FONTSIZE = ["states", STATE_VAR, "imagebutton", "text
 KEY_STATE_IMAGEBUTTON_TEXT_ALIGNV = ["states", STATE_VAR, "imagebutton", "text", "alignv"]
 KEY_STATE_IMAGEBUTTON_TEXT_ALIGNH = ["states", STATE_VAR, "imagebutton", "text", "alignh"]
 KEY_STATE_IMAGEBUTTON_TEXT_COLOR_FG = ["states", STATE_VAR, "imagebutton", "text", "color_fg"]
-KEY_STATE_IMAGEBUTTON_TEXT_COLOR_OUTLINE = ["states", STATE_VAR, "imagebutton", "text", "color_outline"]
+KEY_STATE_IMAGEBUTTON_COLOR_BACKGROUND = ["states", STATE_VAR, "imagebutton", "color_background"]
 
 KEY_STATE_ROTARYENCODER_LEDRINGMODE = ["states", STATE_VAR, "rotaryencoder", "ledringmode"]
 
@@ -25,37 +30,39 @@ KEY_DATA = ["data"]
 KEY_DESCRIPTION_TITLE = ["description", "title"]
 KEY_DESCRIPTION_CONTENT = ["description", "content"]
 
-
 def getValue(data, key, state: int = 0):
+    return getValueOrDefault(data, key, state)
+
+def getValueOrDefault(data, key, state: int = 0, default: Any = None):
 
     if isinstance(key, (list, tuple)):
-        __getValue_list(data, key, state)
+        return __getValue_list(data, key, state, default)
 
-    __getValue_direct(data, key, state)
-
-
-def __getValue_direct(data, key, state):
-    return data[key]
+    return __getValue_direct(data, key, state, default)
 
 
-def __getValue_list(data, key, state):
+def __getValue_direct(data, key, state, default: Any = None):
+    if key in data:
+        return data[key]
+    return default
+
+
+def __getValue_list(data, key, state, default: Any = None):
     result = data
-
     for subkey in key:
         if subkey == STATE_VAR:
             result = result[state]
         elif subkey not in result:
-            return None
+            return default
         else:
             result = result[subkey]
-
     return result
 
 
 def setValue(data, key, value, state: int = 0):
-
     if isinstance(key, (list, tuple)):
         __setValue_list(data, key, value, state)
+        return
 
     __setValue_direct(data, key, value, state)
 
@@ -69,11 +76,50 @@ def __setValue_list(data, key, value, state):
 
     for subkey in key[:-1]:
         if subkey == STATE_VAR:
+            while len(result) <= state:
+                result.append({})
             result = result[state]
         elif subkey not in result:
-            result[subkey] = {}
+            if subkey == "states":
+                result[subkey] = []
+            else:
+                result[subkey] = {}
             result = result[subkey]
         else:
             result = result[subkey]
 
     result[key[-1]] = value
+
+
+def ensureDefaultValue(data, key, state: int = 0, value: Any = None):
+    if isinstance(key, (list, tuple)):
+        __ensureDefaultValue_list(data, key, value, state)
+        return
+
+    __ensureDefaultValue_direct(data, key, value, state)
+
+
+def __ensureDefaultValue_direct(data, key, value, state):
+    if key not in data or data[key] is None:
+        data[key] = value
+
+
+def __ensureDefaultValue_list(data, key, value, state):
+    result = data
+
+    for subkey in key[:-1]:
+        if subkey == STATE_VAR:
+            while len(result) <= state:
+                result.append({})
+            result = result[state]
+        elif subkey not in result:
+            if subkey == "states":
+                result[subkey] = []
+            else:
+                result[subkey] = {}
+            result = result[subkey]
+        else:
+            result = result[subkey]
+
+    if key[-1] not in result or result[key[-1]] is None:
+        result[key[-1]] = value

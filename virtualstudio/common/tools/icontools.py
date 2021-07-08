@@ -11,7 +11,17 @@ def readPNGIcon(path: str):
     :return: the base64 encoded string ready for sending
     """
     data = readFileBinary(path)
+    return encodeIconData(data)
+
+
+def encodeIconData(data: bytes):
+    """
+    Encodes Icon data
+    :param data: Data to encode
+    :return: Encoded String
+    """
     return base64.b64encode(data).decode("utf-8")
+
 
 def decodeIconData(data: str):
     """
@@ -19,7 +29,11 @@ def decodeIconData(data: str):
     :param data: Data String to decode
     :return: Decoded Bytes
     """
+    if data is None:
+        return None
+
     return base64.b64decode(data.encode("utf-8"))
+
 
 def computeCategoryID(category: List[str]):
     """

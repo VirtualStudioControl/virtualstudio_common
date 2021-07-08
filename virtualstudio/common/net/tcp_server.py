@@ -1,5 +1,5 @@
 import socket
-from threading import Thread
+from threading import Thread, Lock
 
 from .messagetools import *
 
@@ -11,6 +11,8 @@ class TCPServer(Thread):
         self.running = False
 
         self.flags = socket.NI_NUMERICHOST | socket.NI_NUMERICSERV
+
+        self.sendLock = Lock()
 
         self.connection = None
         self.buffersize = 16384
@@ -39,14 +41,16 @@ class TCPServer(Thread):
             address, port = socket.getnameinfo(clientAddress, self.flags)
             try:
                 while True:
-                    data = self.connection.recv(self.buffersize) # 16 kb buffer
-                    if len(data) < 4:
+                    length = self.connection.recv(4) # 16 kb buffer
+                    if len(length) < 4:
                         continue
-                    print("Message Recieved: {:08X} {}".format(getInt(data, start=0), str(data[4:])))
-                    self.messageStub, messages = assembleMessage(self.messageStub, data)
+                    data = self.connection.recv(getInt(length, start=0))
+                    print("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
+                    self.onMessageRecv(data)
+                    #self.messageStub, messages = assembleMessage(self.messageStub, data)
 
-                    for msg in messages:
-                        self.onMessageRecv(msg)
+                    #for msg in messages:
+                        #self.onMessageRecv(msg)
 
             except ConnectionResetError:
                 pass # Ignore
@@ -59,6 +63,10 @@ class TCPServer(Thread):
     def sendMessage(self, message: bytes):
         if self.connection is not None:
             messages = disassembleMessage(message)
-            for packet in messages:
-                print("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
-                self.connection.sendall(packet)
+            self.sendLock.acquire()
+            try:
+                for packet in messages:
+                    print("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
+                    self.connection.sendall(packet)
+            finally:
+                self.sendLock.release()

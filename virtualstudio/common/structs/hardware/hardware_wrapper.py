@@ -1,3 +1,5 @@
+from typing import Optional, Dict
+
 from ...data.constants import PROFILE_NAME_DEFAULT
 
 HARDWARE_TYPE_UNKNOWN = 0x00
@@ -29,7 +31,15 @@ class HardwareWrapper:
             "currentProfile": self.currentProfile
         }
 
+        params = self.getHardwareParameters()
+
+        if params is not None:
+            result["parameters"] = params
+
         return result
+
+    def getHardwareParameters(self) -> Optional[Dict]:
+        return None
 
     def getType(self):
         return HARDWARE_TYPE_UNKNOWN
