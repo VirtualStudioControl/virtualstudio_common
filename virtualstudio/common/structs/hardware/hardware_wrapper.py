@@ -1,10 +1,11 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, List, NewType, Any
 
 from ...data.constants import PROFILE_NAME_DEFAULT
 
 HARDWARE_TYPE_UNKNOWN = 0x00
 HARDWARE_TYPE_ELGATO = 0x01
 HARDWARE_TYPE_MIDI = 0x02
+
 
 class HardwareWrapper:
 
@@ -15,6 +16,8 @@ class HardwareWrapper:
         self.identifier = identifier
 
         self.currentProfile = PROFILE_NAME_DEFAULT
+
+        self.controls: List[Any] = []
 
         if profile is not None:
             self.currentProfile = profile
@@ -37,6 +40,9 @@ class HardwareWrapper:
             result["parameters"] = params
 
         return result
+
+    def close(self):
+        pass
 
     def getHardwareParameters(self) -> Optional[Dict]:
         return None

@@ -2,6 +2,7 @@ from typing import Dict, Any
 
 from virtualstudio.common.structs.action.action_info import ActionInfo
 from virtualstudio.common.structs.hardware.hardware_wrapper import HardwareWrapper
+from virtualstudio.common.tools import actiondatatools
 
 CONTROL_TYPE_ANY = "ANY"
 CONTROL_TYPE_NONE = "NONE"
@@ -17,20 +18,28 @@ class AbstractAction:
         self.__controlID = controlID
         self.__device: HardwareWrapper = device
         self.__info: ActionInfo = actionInfo
+        self.__currentState = 0
 
     #region PlugIn API
 
-    def storeParams(self, params: Dict[str, Any], override: bool = False):
-        pass
+    def storeParams(self, params: Dict[str, Any], replace: bool = True):
+        if replace:
+            actiondatatools.updateValue(data=self.__info.actionParams, key=actiondatatools.KEY_PARAMETERS,
+                                        state=self.__currentState, value=params)
+            return
 
-    def loadParams(self) -> Dict[str, Any]:
-        pass
+        actiondatatools.setValue(data=self.__info.actionParams, key=actiondatatools.KEY_PARAMETERS,
+                                 state=self.__currentState, value=params)
+
+    def getParams(self) -> Dict[str, Any]:
+        return actiondatatools.getValueOrDefault(data=self.__info.actionParams, key=actiondatatools.KEY_PARAMETERS,
+                                                 state=self.__currentState, default={})
 
     def setState(self, state: int):
-        pass
+        self.__currentState = state
 
     def getState(self) -> int:
-        pass
+        return self.__currentState
 
     #endregion
 

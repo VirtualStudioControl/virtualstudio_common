@@ -25,13 +25,16 @@ KEY_STATE_IMAGEBUTTON_COLOR_BACKGROUND = ["states", STATE_VAR, "imagebutton", "c
 
 KEY_STATE_ROTARYENCODER_LEDRINGMODE = ["states", STATE_VAR, "rotaryencoder", "ledringmode"]
 
-KEY_DATA = ["data"]
+KEY_PARAMETERS = ["params"]
+KEY_GUI = ["params"]
 
 KEY_DESCRIPTION_TITLE = ["description", "title"]
 KEY_DESCRIPTION_CONTENT = ["description", "content"]
 
+
 def getValue(data, key, state: int = 0):
     return getValueOrDefault(data, key, state)
+
 
 def getValueOrDefault(data, key, state: int = 0, default: Any = None):
 
@@ -89,6 +92,50 @@ def __setValue_list(data, key, value, state):
             result = result[subkey]
 
     result[key[-1]] = value
+
+
+def updateValue(data, key, value, state: int = 0):
+    if isinstance(key, (list, tuple)):
+        __setValue_list(data, key, value, state)
+        return
+
+    __setValue_direct(data, key, value, state)
+
+
+def __updateValue_direct(data, key, value, state):
+    __updateParameter(data[key], value)
+
+
+def __updateValue_list(data, key, value, state):
+    result = data
+
+    for subkey in key[:-1]:
+        if subkey == STATE_VAR:
+            while len(result) <= state:
+                result.append({})
+            result = result[state]
+        elif subkey not in result:
+            if subkey == "states":
+                result[subkey] = []
+            else:
+                result[subkey] = {}
+            result = result[subkey]
+        else:
+            result = result[subkey]
+
+    __updateParameter(result[key[-1]], value)
+
+
+def __updateParameter(oldDict: dict, newDict: dict):
+
+    for k in newDict:
+        if k in oldDict:
+            if isinstance(newDict[k], dict) and isinstance(oldDict[k], dict):
+                __updateParameter(oldDict[k], newDict[k])
+            else:
+                oldDict[k] = newDict[k]
+        else:
+            oldDict[k] = newDict[k]
 
 
 def ensureDefaultValue(data, key, state: int = 0, value: Any = None):
