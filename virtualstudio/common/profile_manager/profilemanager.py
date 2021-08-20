@@ -10,15 +10,28 @@ PROFILE_SETS: Dict[str, ProfileSet] = {}
 
 
 def createProflieSet(hardware: HardwareWrapper):
-    if hardware.getHardwareFamily() not in PROFILE_SETS:
-        PROFILE_SETS[hardware.getHardwareFamily()] = ProfileSet(hardware.getHardwareFamily())
-        PROFILE_SETS[hardware.getHardwareFamily()].appendProfile(Profile(hardware.getHardwareFamily(), PROFILE_NAME_DEFAULT, []))
+    createProflieSetFromFamily(hardware.getHardwareFamily())
+
+
+def createProflieSetFromFamily(hardwareFamily: str):
+    if hardwareFamily not in PROFILE_SETS:
+        PROFILE_SETS[hardwareFamily] = ProfileSet(hardwareFamily)
+        PROFILE_SETS[hardwareFamily].appendProfile(Profile(hardwareFamily, PROFILE_NAME_DEFAULT, []))
 
 
 def getProfileSet(hardware: HardwareWrapper):
-    if hardware.getHardwareFamily() in PROFILE_SETS:
-        return PROFILE_SETS[hardware.getHardwareFamily()]
+    return getProfileSetFromFamily(hardware.getHardwareFamily())
+
+
+def getProfileSetFromFamily(hardwareFamily: str):
+    if hardwareFamily in PROFILE_SETS:
+        return PROFILE_SETS[hardwareFamily]
     return None
+
+
+def getOrCreateProfileSetFromFamily(hardwareFamily: str):
+    createProflieSetFromFamily(hardwareFamily)
+    return getProfileSetFromFamily(hardwareFamily)
 
 
 def getOrCreateProfileSet(hardware: HardwareWrapper):

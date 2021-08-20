@@ -31,7 +31,7 @@ class ActionLauncher:
         return "{}.{}.{}-{}".format(self.getAuthor(), self.getCategory(), self.getName(), self.getVersion())
 
     def allowedControls(self) -> List[str]:
-        return []
+        return list(self.ACTIONS.keys())
 
     def toDict(self) -> dict:
         result = {
@@ -53,7 +53,8 @@ class ActionLauncher:
 
     # endregion
 
-    def getActionForControl(self, device, controlID, actionInfo: ActionInfo):
-        controlType = ""
-        return self.ACTIONS[controlType](device, controlID, actionInfo)
+    def getActionForControl(self, controlID, actionInfo: ActionInfo):
+        if actionInfo.controlType in self.ACTIONS:
+            return self.ACTIONS[actionInfo.controlType](self, controlID, actionInfo)
 
+        return None

@@ -26,7 +26,7 @@ KEY_STATE_IMAGEBUTTON_COLOR_BACKGROUND = ["states", STATE_VAR, "imagebutton", "c
 KEY_STATE_ROTARYENCODER_LEDRINGMODE = ["states", STATE_VAR, "rotaryencoder", "ledringmode"]
 
 KEY_PARAMETERS = ["params"]
-KEY_GUI = ["params"]
+KEY_GUI = ["gui"]
 
 KEY_DESCRIPTION_TITLE = ["description", "title"]
 KEY_DESCRIPTION_CONTENT = ["description", "content"]
@@ -54,7 +54,10 @@ def __getValue_list(data, key, state, default: Any = None):
     result = data
     for subkey in key:
         if subkey == STATE_VAR:
-            result = result[state]
+            if state < len(result):
+                result = result[state]
+            else:
+                return None
         elif subkey not in result:
             return default
         else:
@@ -63,6 +66,14 @@ def __getValue_list(data, key, state, default: Any = None):
 
 
 def setValue(data, key, value, state: int = 0):
+    """
+    Sets the value of the given Key in data. All keys in data not defined in value are discarded
+    :param data:
+    :param key:
+    :param value:
+    :param state:
+    :return:
+    """
     if isinstance(key, (list, tuple)):
         __setValue_list(data, key, value, state)
         return
@@ -95,15 +106,24 @@ def __setValue_list(data, key, value, state):
 
 
 def updateValue(data, key, value, state: int = 0):
+    """
+    Merges the value with the data. (All fields not defined in value are left alone in data)
+
+    :param data:
+    :param key:
+    :param value:
+    :param state:
+    :return:
+    """
     if isinstance(key, (list, tuple)):
-        __setValue_list(data, key, value, state)
+        __updateValue_list(data, key, value, state)
         return
 
-    __setValue_direct(data, key, value, state)
+    __updateValue_direct(data, key, value, state)
 
 
 def __updateValue_direct(data, key, value, state):
-    __updateParameter(data[key], value)
+    merge(data[key], value)
 
 
 def __updateValue_list(data, key, value, state):
@@ -123,15 +143,18 @@ def __updateValue_list(data, key, value, state):
         else:
             result = result[subkey]
 
-    __updateParameter(result[key[-1]], value)
+    if key[-1] not in result:
+        result[key[-1]] = {}
+
+    merge(result[key[-1]], value)
 
 
-def __updateParameter(oldDict: dict, newDict: dict):
+def merge(oldDict: dict, newDict: dict):
 
     for k in newDict:
         if k in oldDict:
             if isinstance(newDict[k], dict) and isinstance(oldDict[k], dict):
-                __updateParameter(oldDict[k], newDict[k])
+                merge(oldDict[k], newDict[k])
             else:
                 oldDict[k] = newDict[k]
         else:

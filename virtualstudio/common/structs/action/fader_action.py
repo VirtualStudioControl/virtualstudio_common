@@ -11,7 +11,7 @@ class FaderAction(AbstractAction):
     def onTouchEnd(self):
         pass
 
-    def onMove(self):
+    def onMove(self, value):
         pass
 
     #endregion

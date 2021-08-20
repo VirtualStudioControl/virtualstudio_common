@@ -11,7 +11,7 @@ class RotaryEncoderAction(AbstractAction):
     def onKeyUp(self):
         pass
 
-    def onRotate(self):
+    def onRotate(self, value: int):
         pass
 
     #endregion

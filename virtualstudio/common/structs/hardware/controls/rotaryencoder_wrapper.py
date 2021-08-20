@@ -1,6 +1,6 @@
 from typing import Callable
 
-from virtualstudio.common.structs.action.abstract_action import AbstractAction
+from virtualstudio.common.structs.action.abstract_action import AbstractAction, CONTROL_TYPE_ROTARY_ENCODER
 from virtualstudio.common.structs.hardware.controls.abstract_control_wrapper import AbstractControlWrapper
 
 LED_OFF = 0
@@ -13,6 +13,9 @@ class RotaryEncoderWrapper(AbstractControlWrapper):
         self.setLEDRingMode = ledModeSetter
         super(RotaryEncoderWrapper, self).__init__()
 
+    def getType(self):
+        return CONTROL_TYPE_ROTARY_ENCODER
+
     def setAction(self, action: AbstractAction):
         super(RotaryEncoderWrapper, self).setAction(action)
 
@@ -23,3 +26,15 @@ class RotaryEncoderWrapper(AbstractControlWrapper):
     def setLEDRingMode(self, ringMode: int = 0) -> bool:
         #DUMMY for Code Completion and Documentation
         return False
+
+    def keyDown(self):
+        if self.action is not None:
+            self.action.onKeyDown()
+
+    def keyUp(self):
+        if self.action is not None:
+            self.action.onKeyUp()
+
+    def rotate(self, value: int):
+        if self.action is not None:
+            self.action.onRotate(value)

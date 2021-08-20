@@ -19,6 +19,15 @@ class ProfileSet():
             return self.profiles[name]
         return None
 
+    def getDefaultProfile(self):
+        for name in self.profiles:
+            return self.profiles[name]
+
+    def getOrCreateProfile(self, name):
+        if name not in self.profiles:
+            self.profiles[name] = Profile(self.hardwareFamily, name)
+        return self.profiles[name]
+
     def removeProfile(self, profileName: str):
         del self.profiles[profileName]
 

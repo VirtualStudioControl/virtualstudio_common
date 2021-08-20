@@ -44,6 +44,7 @@ class HardwareWrapper:
     def close(self):
         pass
 
+    #region Metadata
     def getHardwareParameters(self) -> Optional[Dict]:
         return None
 
@@ -52,10 +53,33 @@ class HardwareWrapper:
 
     def getHardwareFamily(self):
         return "{} {}".format(self.manufacturer, self.name)
+    #endregion
+
+    #region Controls
+
+    def getControlType(self, index: int):
+        return self.controls[index].getType()
+
+    def getControl(self, index: int):
+        return self.controls[index]
+
+    #endregion
+
+    #region Profiles
 
     def bindProfile(self, profile):
         self.currentProfile = profile.name
-        pass
+        actions = profile.getActions()
+
+        for control in self.controls:
+            control.setAction(None)
+
+        for controlID in actions:
+            self.controls[controlID].setAction(actions[controlID])
+
 
     def clearProfile(self):
-        pass
+        for control in self.controls:
+            control.setAction(None)
+
+    #endregion

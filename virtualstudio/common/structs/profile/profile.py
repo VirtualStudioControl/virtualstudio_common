@@ -1,7 +1,10 @@
 from typing import List, Dict
 
+from ..action.abstract_action import AbstractAction
 from ..action.action_info import ActionInfo
 from ..action.action_info import fromDict as actionInfoFromDict
+from ...action_manager.actionmanager import getActionByID
+
 
 class Profile:
 
@@ -12,15 +15,29 @@ class Profile:
         self.name: str = name
         self.category: List[str] = category
 
-        self.actions: Dict[int, ActionInfo] = {}
+        self.actions: Dict[int, AbstractAction] = {}
 
     def setAction(self, controlID: int, action: ActionInfo):
-        self.actions[controlID] = action
+        action.profileName = self.name
+        action.deviceFamily = self.hardwareFamily
+        actionLauncher = getActionByID(action.launcher)
+        self.actions[controlID] = actionLauncher.getActionForControl(controlID, action)
+
+    def getAction(self, index: int):
+        if index in self.actions:
+            return self.actions[index]
+        return None
+
+    def getActions(self):
+        return self.actions
 
     def removeAction(self, controlID: int):
+        self.actions[controlID].getActionInfo().profileName = None
+        self.actions[controlID].getActionInfo().deviceFamily = None
         del self.actions[controlID]
 
     def update(self, other):
+        #TODO: Merge Data Only, Preserve Action Instances where possible
         self.hardwareFamily = other.hardwareFamily
         self.actions = other.actions
 
@@ -34,7 +51,7 @@ class Profile:
         actionList = []
 
         for action in self.actions:
-            actionList.append(self.actions[action].toDict())
+            actionList.append(self.actions[action].getActionInfo().toDict())
 
         result["actions"] = actionList
 
