@@ -7,14 +7,11 @@ from virtualstudio.common.tools import actiondatatools, icontools
 class ImageButtonAction(AbstractAction):
 
     def setImage(self, image: Union[bytes, bytearray, list]) -> bool:
-        print("Set Image")
         val = True
         for control in self.getControlWrappers():
             if hasattr(control, "setImage"):
                 if callable(getattr(control, "setImage")):
-                    print("Trying to Set image")
                     val = val & control.setImage(image)
-
         return val
 
     #region internal
@@ -23,7 +20,6 @@ class ImageButtonAction(AbstractAction):
         super(ImageButtonAction, self).registerControlWrapper(control)
         if hasattr(control, "setImage"):
             if callable(getattr(control, "setImage")):
-                print("Trying to Set image")
                 control.setImage(icontools.decodeIconData(actiondatatools.getValue(self.getParams(),
                                                                         actiondatatools.KEY_STATE_IMAGEBUTTON_IMAGE,
                                                                         self.getState())))
