@@ -45,6 +45,12 @@ class AbstractAction:
     def getState(self) -> int:
         return self.__info.currentState
 
+    def setGUIParameter(self, widgetName: str, parameter: str, value: Any):
+        actiondatatools.setValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter], value)
+
+    def getGUIParameter(self, widgetName: str, parameter: str):
+        return actiondatatools.getValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter])
+
     def nextState(self):
         state = self.getState()
         self.setState((state + 1) % self.__launcher.getActionStateCount(self.__info.controlType))
