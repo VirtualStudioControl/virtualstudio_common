@@ -1,3 +1,4 @@
+#region Client Messages
 INTERN_REQUEST_TYPE = "request"
 INTERN_MESSAGE_ID = "messageid"
 INTERN_MESSAGE_PAYLOAD = "payload"
@@ -40,5 +41,27 @@ REQ_UPDATE_PROFILE_PARAM_PROFILE = "profile"
 REQ_REMOVE_PROFILE = "removeProfile"
 REQ_REMOVE_PROFILE_PARAM_DEVICE = "deviceID"
 REQ_REMOVE_PROFILE_PARAM_PROFILENAME = "profileName"
+
+#endregion
+#endregion
+
+#region Events
+
+INTERN_EVENT_TYPE = "event"
+INTERN_EVENT_SOURCE = "source"
+
+#region Sources
+
+EVT_SRC_CORE = "core"
+EVT_SRC_PLUGIN = "plugin"
+
+#endregion
+
+#region Actions
+
+EVT_UPDATE_PARAMS = "paramUpdate"
+EVT_UPDATE_PARAMS_PARAM_ACTION = "action"
+
+#endregion
 
 #endregion

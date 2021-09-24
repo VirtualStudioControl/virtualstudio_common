@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 
 class ActionInfo:
@@ -14,6 +14,15 @@ class ActionInfo:
         self.deviceFamily = deviceFamily
 
         self.actionParams = {}
+
+        self.dataChangedCallback: Optional[Callable[[], None]] = None
+
+    def setDataChangedCallback(self, dataChangedCallback: Optional[Callable[[], None]]):
+        self.dataChangedCallback = dataChangedCallback
+
+    def onDataChanged(self):
+        if self.dataChangedCallback is not None:
+            self.dataChangedCallback()
 
     def toDict(self):
         result = self.toIdent()

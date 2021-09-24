@@ -28,6 +28,11 @@ class Profile:
             return self.actions[index]
         return None
 
+    def updateActionData(self, controlID: int, actionParams: dict):
+        if controlID in self.actions:
+            self.actions[controlID].getActionInfo().actionParams = actionParams
+            self.actions[controlID].getActionInfo().onDataChanged()
+
     def getActions(self):
         return self.actions
 

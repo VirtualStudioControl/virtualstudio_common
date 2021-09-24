@@ -1,5 +1,7 @@
 from typing import Dict, Any
 
+from virtualstudio.common.eventmanager import eventmanager
+from virtualstudio.common.net.protocols.virtualstudiocom import server
 from virtualstudio.common.structs.action.action_info import ActionInfo
 from virtualstudio.common.structs.hardware.hardware_wrapper import HardwareWrapper
 from virtualstudio.common.tools import actiondatatools
@@ -45,8 +47,10 @@ class AbstractAction:
     def getState(self) -> int:
         return self.__info.currentState
 
-    def setGUIParameter(self, widgetName: str, parameter: str, value: Any):
+    def setGUIParameter(self, widgetName: str, parameter: str, value: Any, silent: bool = False):
         actiondatatools.setValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter], value)
+        if not silent:
+            eventmanager.sendEvent(server.updateActionData(self.__info))
 
     def getGUIParameter(self, widgetName: str, parameter: str):
         return actiondatatools.getValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter])
@@ -77,6 +81,7 @@ class AbstractAction:
 
     def paramsChangedInternal(self, params: Dict[str, Any]):
         self.onParamsChanged(params)
+        eventmanager.sendEvent(server.updateActionData(self.__info))
 
     def stateChangedInternal(self, state):
         pass

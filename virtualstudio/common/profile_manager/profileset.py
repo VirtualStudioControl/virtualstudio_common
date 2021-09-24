@@ -23,6 +23,9 @@ class ProfileSet():
         for name in self.profiles:
             return self.profiles[name]
 
+    def getProfileNames(self):
+        return [name for name in self.profiles]
+
     def getOrCreateProfile(self, name):
         if name not in self.profiles:
             self.profiles[name] = Profile(self.hardwareFamily, name)
