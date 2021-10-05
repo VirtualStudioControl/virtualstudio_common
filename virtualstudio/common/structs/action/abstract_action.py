@@ -47,10 +47,17 @@ class AbstractAction:
     def getState(self) -> int:
         return self.__info.currentState
 
+    def hasGUIParameter(self,  widgetName: str, parameter: str):
+        return actiondatatools.getValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter]) is not None
+
     def setGUIParameter(self, widgetName: str, parameter: str, value: Any, silent: bool = False):
         actiondatatools.setValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter], value)
         if not silent:
             eventmanager.sendEvent(server.updateActionData(self.__info))
+
+    def ensureGUIParameter(self, widgetName: str, parameter: str, value: Any, silent: bool = False):
+        if not self.hasGUIParameter(widgetName, parameter):
+            self.setGUIParameter(widgetName, parameter, value, silent)
 
     def getGUIParameter(self, widgetName: str, parameter: str):
         return actiondatatools.getValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter])

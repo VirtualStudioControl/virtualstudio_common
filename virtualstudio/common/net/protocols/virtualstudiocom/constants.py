@@ -3,6 +3,15 @@ INTERN_REQUEST_TYPE = "request"
 INTERN_MESSAGE_ID = "messageid"
 INTERN_MESSAGE_PAYLOAD = "payload"
 
+#region Accounts
+
+REQ_ACCOUNT_LIST = "listAccounts"
+
+REQ_ACCOUNT_SET_DATA = "setAccountData"
+REQ_ACCOUNT_SET_DATA_PARAM_ACCOUNT = "account"
+
+#endregion
+
 #region Actions
 
 REQ_ACTION_LIST = "listActions"
@@ -19,7 +28,11 @@ REQ_SET_ACTION_DATA_PARAM_DATA = "data"
 
 #endregion
 
+#region Devices
+
 REQ_DEVICE_LIST = "listDevices"
+
+#endregion
 
 #region Profile Requests
 

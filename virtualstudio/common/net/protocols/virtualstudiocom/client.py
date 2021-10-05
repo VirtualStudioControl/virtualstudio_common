@@ -1,12 +1,26 @@
 from typing import Dict
 
+from virtualstudio.common.account_manager.account_info import AccountInfo
 from virtualstudio.common.structs.action.action_info import ActionInfo
 from virtualstudio.common.structs.profile.profile import Profile
 from . import constants as consts
 from .common import createRequest
 
+#region Accounts
+
+
+def requestAccountList():
+    return createRequest(consts.REQ_ACCOUNT_LIST)
+
+
+def setAccountData(account: AccountInfo):
+    return createRequest(consts.REQ_ACCOUNT_SET_DATA,
+                         {consts.REQ_ACCOUNT_SET_DATA_PARAM_ACCOUNT: account.toDictWthPasswd()})
+
+#endregion
 
 #region Actions
+
 
 def requestActionList():
     return createRequest(consts.REQ_ACTION_LIST)
