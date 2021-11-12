@@ -8,7 +8,7 @@ class FaderAction(AbstractAction):
         for control in self.getControlWrappers():
             if hasattr(control, "setFaderValue"):
                 if callable(getattr(control, "setFaderValue")):
-                    val = val & control.setFaderValue(value)
+                    val = val & control.setFaderValue(int(value))
         return val
 
     #region Hardware Event Handlers

@@ -1,11 +1,13 @@
 from typing import Optional, Dict, List, NewType, Any
 
 from ...data.constants import PROFILE_NAME_DEFAULT
+from ...logging import logengine
 
 HARDWARE_TYPE_UNKNOWN = 0x00
 HARDWARE_TYPE_ELGATO = 0x01
 HARDWARE_TYPE_MIDI = 0x02
 
+logger = logengine.getLogger()
 
 class HardwareWrapper:
 
@@ -70,8 +72,10 @@ class HardwareWrapper:
     def bindProfile(self, profile):
         self.currentProfile = profile.name
         actions = profile.getActions()
-
+        logger.debug("{} - {}".format(profile.name, profile.hardwareFamily))
+        logger.debug(self.controls)
         for control in self.controls:
+
             control.setAction(None)
 
         for controlID in actions:

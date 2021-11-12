@@ -1,6 +1,7 @@
 from typing import Dict, Any
 
 from virtualstudio.common.eventmanager import eventmanager
+from virtualstudio.common.logging import logengine
 from virtualstudio.common.net.protocols.virtualstudiocom import server
 from virtualstudio.common.structs.action.action_info import ActionInfo
 from virtualstudio.common.structs.hardware.hardware_wrapper import HardwareWrapper
@@ -21,6 +22,9 @@ class AbstractAction:
         self.__info: ActionInfo = actionInfo
         self.__control_wrappers = []
         self.onLoad()
+
+        self.logger = logengine.getLogger()
+
     #region PlugIn API
 
     def storeParams(self, params: Dict[str, Any], replace: bool = False):
@@ -42,7 +46,10 @@ class AbstractAction:
 
     def setState(self, state: int):
         self.__info.currentState = state
-        self.stateChangedInternal(state)
+        try:
+            self.stateChangedInternal(state)
+        except Exception as ex:
+            self.logger.error("State Change Failed:" + str(ex))
 
     def getState(self) -> int:
         return self.__info.currentState

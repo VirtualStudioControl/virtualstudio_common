@@ -21,7 +21,8 @@ class Profile:
         action.profileName = self.name
         action.deviceFamily = self.hardwareFamily
         actionLauncher = getActionByID(action.launcher)
-        self.actions[controlID] = actionLauncher.getActionForControl(controlID, action)
+        if actionLauncher is not None:
+            self.actions[controlID] = actionLauncher.getActionForControl(controlID, action)
 
     def getAction(self, index: int):
         if index in self.actions:

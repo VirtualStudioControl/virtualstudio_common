@@ -2,6 +2,8 @@ import socket
 from threading import Thread, Lock
 
 from .messagetools import *
+from ..logging import logengine
+
 
 class TCPServer(Thread):
     def __init__(self, listenAddress="", port=4400):
@@ -17,6 +19,8 @@ class TCPServer(Thread):
         self.connection = None
         self.buffersize = 16384
         self.messageStub = None
+
+        self.logger = logengine.getLogger()
 
     def __str__(self):
         return "TCP Server at " + str(self.listeningAddress) + ":" + str(self.port)
@@ -45,7 +49,7 @@ class TCPServer(Thread):
                     if len(length) < 4:
                         continue
                     data = self.connection.recv(getInt(length, start=0))
-                    print("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
+                    self.logger.debug("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
                     self.onMessageRecv(data)
                     #self.messageStub, messages = assembleMessage(self.messageStub, data)
 
@@ -66,7 +70,7 @@ class TCPServer(Thread):
             self.sendLock.acquire()
             try:
                 for packet in messages:
-                    print("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
+                    self.logger.debug("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
                     self.connection.sendall(packet)
             finally:
                 self.sendLock.release()

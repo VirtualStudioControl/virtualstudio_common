@@ -1,6 +1,36 @@
+
 import logging
+from logging import Logger
+import sys
 
-LOG_FORMAT = '[%(asctime)s] [%(levelname)s] %(message)s'
+from typing import Dict, Optional
 
-def init(logfile="common.log", level=logging.DEBUG):
-    logging.basicConfig(filename=logfile, format=LOG_FORMAT, filemode='a', level=level)
+LOG_FORMAT = ""
+LOG_TO_CONSOLE = False
+
+LOG_LEVEL = logging.DEBUG
+
+def getLogger(name=None, level=None, isVerbose=False) -> Logger:
+    if level is None:
+        if isVerbose:
+            log_level = logging.DEBUG
+        else:
+            log_level = LOG_LEVEL
+    else:
+        log_level = level
+
+    log_format = logging.Formatter(LOG_FORMAT)
+    log = logging.getLogger(name)
+    log.setLevel(log_level)
+
+    if not log.hasHandlers():
+
+        if LOG_TO_CONSOLE:
+            # writing to stdout
+            handler = logging.StreamHandler(sys.stdout)
+            handler.setLevel(log_level)
+            handler.setFormatter(log_format)
+            log.addHandler(handler)
+
+    return log
+

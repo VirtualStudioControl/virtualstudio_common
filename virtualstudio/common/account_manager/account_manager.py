@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Callable
 
 from virtualstudio.common.account_manager.account_info import AccountInfo, fromDict
 from virtualstudio.common.tools.icontools import readPNGIcon
@@ -11,6 +11,7 @@ ACCOUNT_TYPE_ICONS: Dict[str, str] = {}
 
 ACCOUNTS: Dict[str, AccountInfo] = {}
 
+ACCOUNT_CHANGED_CALLBACKS: List[Callable[[str], None]] = []
 
 def generateUUID() -> str:
     global UUID_COUNTER
@@ -36,10 +37,12 @@ def updateAccount(account: Dict[str, Any]) -> (bool, str):
             return False, account['uuid']
         ACCOUNTS[account['uuid']] = fromDict(account)
         storeAccountData()
+        onAccountChanged(account['uuid'])
         return True, account['uuid']
     if account['uuid'] in ACCOUNTS:
         ACCOUNTS[account['uuid']].update(account)
         storeAccountData()
+        onAccountChanged(account['uuid'])
         return True, account['uuid']
     return False, account['uuid']
 
@@ -60,6 +63,32 @@ def getAccountByUUID(uuid: str) -> AccountInfo:
 def getAccountList() -> List[AccountInfo]:
     return list(ACCOUNTS.values())
 
+def getAccountListOfTypes(*account_type) -> List[AccountInfo]:
+    result = []
 
+    for account in ACCOUNTS.values():
+        if account.accountType in account_type:
+            result.append(account)
+
+    return result
+
+
+#region Event Management
+
+def registerAccountChangeCallback(callback: Callable[[str], None]):
+    ACCOUNT_CHANGED_CALLBACKS.append(callback)
+
+
+def unregisterAccountChangeCallback(callback: Callable[[str], None]):
+    ACCOUNT_CHANGED_CALLBACKS.remove(callback)
+
+
+def onAccountChanged(accountUUID: str):
+    for cb in ACCOUNT_CHANGED_CALLBACKS:
+        cb(accountUUID)
+
+#endregion
+
+# Overridden in Core
 def storeAccountData() -> None:
     pass

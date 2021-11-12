@@ -37,6 +37,11 @@ class ButtonAction(AbstractAction):
                                                   actiondatatools.KEY_STATE_BUTTON_LEDSTATE,
                                                   self.getState()))
 
+    def ensureLEDState(self):
+        self.setLEDState(actiondatatools.getValue(self.getParams(),
+                                                  actiondatatools.KEY_STATE_BUTTON_LEDSTATE,
+                                                  self.getState()))
+
     #endregion
 
     #region Hardware Event Handlers

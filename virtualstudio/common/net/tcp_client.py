@@ -2,6 +2,7 @@ from threading import Thread, Lock
 import socket
 
 from.messagetools import *
+from ..logging import logengine
 
 
 class TCPClient(Thread):
@@ -19,6 +20,8 @@ class TCPClient(Thread):
         self.sendLock = Lock()
 
         self.messageStub = None
+
+        self.logger = logengine.getLogger()
 
     def __str__(self):
         return "TCP Client connected to " + str(self.address) + ":" + str(self.port)
@@ -44,7 +47,7 @@ class TCPClient(Thread):
                 if len(length) < 4:
                     continue
                 data = self.sock.recv(getInt(length, start=0))
-                print("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
+                self.logger.debug("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
                 self.onMessageRecv(data)
 
                 #for msg in messages:

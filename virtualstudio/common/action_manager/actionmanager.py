@@ -46,4 +46,6 @@ def getAllLaunchers():
 
 
 def getActionByID(identifier) -> ActionLauncher:
+    if identifier not in ACTION_LAUNCHERS:
+        return None
     return ACTION_LAUNCHERS[identifier]
