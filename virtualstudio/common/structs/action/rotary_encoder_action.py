@@ -11,7 +11,7 @@ class RotaryEncoderAction(AbstractAction):
         for control in self.getControlWrappers():
             if hasattr(control, "setLEDRingValue"):
                 if callable(getattr(control, "setLEDRingValue")):
-                    val = val & control.setLEDState(value)
+                    val = val & control.setLEDRingValue(value)
         return val
 
     def setLEDRingMode(self, mode: int = 0) -> bool:
