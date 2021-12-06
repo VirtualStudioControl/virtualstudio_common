@@ -4,7 +4,9 @@ from ..action.abstract_action import AbstractAction
 from ..action.action_info import ActionInfo
 from ..action.action_info import fromDict as actionInfoFromDict
 from ...action_manager.actionmanager import getActionByID
+from ...logging import logengine
 
+logger = logengine.getLogger()
 
 class Profile:
 
@@ -57,6 +59,9 @@ class Profile:
         actionList = []
 
         for action in self.actions:
+            if self.actions[action] is None:
+                logger.warning("Action is NONE: {}".format(action))
+                continue
             actionList.append(self.actions[action].getActionInfo().toDict())
 
         result["actions"] = actionList

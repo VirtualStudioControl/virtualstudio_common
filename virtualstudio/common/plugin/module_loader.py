@@ -1,6 +1,10 @@
 import os
 import importlib
 
+from virtualstudio.common.logging import logengine
+
+logger = logengine.getLogger()
+
 def loadModulesFromPath(path):
     '''
     Loads all Modules in all packages contained in the given path
@@ -30,5 +34,6 @@ def loadModulesFromPath(path):
                 modules.append(childmod)
     # load the modules
     for d in modules:
+        print(d)
         res[d] = importlib.import_module(d)
     return res

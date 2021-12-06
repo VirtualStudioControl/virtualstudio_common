@@ -5,8 +5,8 @@ import sys
 
 from typing import Dict, Optional
 
-LOG_FORMAT = ""
-LOG_TO_CONSOLE = False
+LOG_FORMAT = '[%(asctime)s] [%(levelname)s] %(message)s at %(pathname)s, line %(lineno)d, Function: %(funcName)s'
+LOG_TO_CONSOLE = True
 
 LOG_LEVEL = logging.DEBUG
 
@@ -31,6 +31,8 @@ def getLogger(name=None, level=None, isVerbose=False) -> Logger:
             handler.setLevel(log_level)
             handler.setFormatter(log_format)
             log.addHandler(handler)
+            print("Added Console Handler")
 
+    print("Returning Logger")
     return log
 
