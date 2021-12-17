@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List, NewType, Any
+from typing import Optional, Dict, List, NewType, Any, Callable
 
 from ...data.constants import PROFILE_NAME_DEFAULT
 from ...logging import logengine
@@ -23,6 +23,8 @@ class HardwareWrapper:
 
         if profile is not None:
             self.currentProfile = profile
+
+        self.profileChangeCallbacks = []
 
     def __str__(self):
         return f'{self.manufacturer} {self.name} ({self.identifier})'
@@ -69,23 +71,44 @@ class HardwareWrapper:
 
     #region Profiles
 
+    def addProfileChangedCallback(self, callback: Callable[[str], None]):
+        if callback not in self.profileChangeCallbacks:
+            self.profileChangeCallbacks.append(callback)
+
+    def removeProfileChangedCallback(self, callback: Callable[[str], None]):
+        if callback in self.profileChangeCallbacks:
+            self.profileChangeCallbacks.append(callback)
+
+    def profileChanged(self, profileName):
+        for callback in self.profileChangeCallbacks:
+            try:
+                callback(profileName)
+            except Exception as ex:
+                logger.error("An exception occured during processing profile change callbacks for profile {} of device family {}".format(profileName, self.getHardwareFamily()))
+                logger.exception(ex)
+
     def bindProfile(self, profile):
         if profile is None:
             logger.error("Profile is None !, Device: {}".format(self.getHardwareFamily()))
             return
         self.currentProfile = profile.name
         actions = profile.getActions()
-        logger.debug("{} - {}".format(profile.name, profile.hardwareFamily))
-        logger.debug(self.controls)
+        logger.debug("Binding Profile {} to {}".format(profile.name, profile.hardwareFamily))
         for control in self.controls:
-
             control.setAction(None)
 
         for controlID in actions:
             self.controls[controlID].setAction(actions[controlID])
 
+        self.profileChanged(self.currentProfile)
 
     def clearProfile(self):
+        try:
+            raise Exception()
+        except Exception as ex:
+            logger.info("clearProfile() Called !, see Exception for callstack")
+            logger.exception(ex)
+
         for control in self.controls:
             control.setAction(None)
 
