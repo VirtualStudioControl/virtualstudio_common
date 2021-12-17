@@ -45,10 +45,14 @@ class TCPServer(Thread):
             address, port = socket.getnameinfo(clientAddress, self.flags)
             try:
                 while True:
-                    length = self.connection.recv(4) # 16 kb buffer
-                    if len(length) < 4:
-                        continue
-                    data = self.connection.recv(getInt(length, start=0))
+                    length = self.connection.recv(4)
+                    while len(length) < 4:
+                        length += self.connection.recv(4 - len(length))  # 16 kb buffer
+                    pkglen = getInt(length, start=0)
+                    data = bytearray()
+                    while len(data) < pkglen:
+                        data += self.connection.recv(pkglen - len(data))
+
                     self.logger.debug("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
                     self.onMessageRecv(data)
                     #self.messageStub, messages = assembleMessage(self.messageStub, data)
@@ -72,5 +76,7 @@ class TCPServer(Thread):
                 for packet in messages:
                     self.logger.debug("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
                     self.connection.sendall(packet)
+            except Exception as ex:
+                self.start()
             finally:
                 self.sendLock.release()

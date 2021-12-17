@@ -70,6 +70,9 @@ class HardwareWrapper:
     #region Profiles
 
     def bindProfile(self, profile):
+        if profile is None:
+            logger.error("Profile is None !, Device: {}".format(self.getHardwareFamily()))
+            return
         self.currentProfile = profile.name
         actions = profile.getActions()
         logger.debug("{} - {}".format(profile.name, profile.hardwareFamily))

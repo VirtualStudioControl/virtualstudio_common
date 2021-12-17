@@ -43,15 +43,16 @@ class TCPClient(Thread):
         self.messageStub = None
         try:
             while self.running:
-                length = self.sock.recv(4)  # 16 kb buffer
-                if len(length) < 4:
-                    continue
-                data = self.sock.recv(getInt(length, start=0))
+                length = self.sock.recv(4)
+                while len(length) < 4:
+                    length += self.sock.recv(4 - len(length))  # 16 kb buffer
+                pkglen = getInt(length, start=0)
+                data = bytearray()
+                while len(data) < pkglen:
+                    data += self.sock.recv(pkglen - len(data))
+
                 self.logger.debug("Message Recieved: {:08X} {}".format(getInt(length, start=0), str(data)))
                 self.onMessageRecv(data)
-
-                #for msg in messages:
-                #    self.onMessageRecv(msg)
 
         except ConnectionAbortedError:
             pass # Socket closed by another thread
