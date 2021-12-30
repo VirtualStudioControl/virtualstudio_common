@@ -77,6 +77,7 @@ class TCPServer(Thread):
                     self.logger.debug("Message Sent:     {:08X} {}".format(getInt(packet, start=0), str(packet[4:])))
                     self.connection.sendall(packet)
             except Exception as ex:
-                self.start()
+                if not self.is_alive():
+                    self.start()
             finally:
                 self.sendLock.release()

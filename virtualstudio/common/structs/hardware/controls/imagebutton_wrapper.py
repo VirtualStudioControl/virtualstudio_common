@@ -6,9 +6,9 @@ from virtualstudio.common.structs.hardware.controls.abstract_control_wrapper imp
 
 class ImagebuttonWrapper(AbstractControlWrapper):
 
-    def __init__(self, imageSetter: Callable[[Union[bytes, bytearray, list, None]], bool]):
+    def __init__(self, imageSetter: Callable[[Union[bytes, bytearray, list, None]], bool], ident):
         self.setImage = imageSetter
-        super(ImagebuttonWrapper, self).__init__()
+        super(ImagebuttonWrapper, self).__init__(ident)
 
     def getType(self):
         return CONTROL_TYPE_IMAGE_BUTTON

@@ -8,11 +8,11 @@ LED_ON = 1
 
 class FaderWrapper(AbstractControlWrapper):
 
-    def __init__(self, faderValueSetter: Callable[[int], bool]):
+    def __init__(self, faderValueSetter: Callable[[int], bool], ident):
         self.setFaderValue = faderValueSetter
         self.setFaderValue(0)
 
-        super(FaderWrapper, self).__init__()
+        super(FaderWrapper, self).__init__(ident)
 
     def getType(self):
         return CONTROL_TYPE_FADER
@@ -35,3 +35,6 @@ class FaderWrapper(AbstractControlWrapper):
     def touchValueChanged(self, value: int):
         if self.action is not None:
             self.action.onMove(value)
+
+    def clearState(self):
+        self.setFaderValue(0)

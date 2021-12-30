@@ -12,10 +12,10 @@ LED_RING_MODE_TRIM = 0x04
 
 class RotaryEncoderWrapper(AbstractControlWrapper):
 
-    def __init__(self, ledValueSetter: Callable[[int], bool], ledModeSetter: Callable[[int], bool]):
+    def __init__(self, ledValueSetter: Callable[[int], bool], ledModeSetter: Callable[[int], bool], ident):
         self.setLEDRingValue = ledValueSetter
         self.setLEDRingMode = ledModeSetter
-        super(RotaryEncoderWrapper, self).__init__()
+        super(RotaryEncoderWrapper, self).__init__(ident=ident)
 
     def getType(self):
         return CONTROL_TYPE_ROTARY_ENCODER
@@ -42,3 +42,7 @@ class RotaryEncoderWrapper(AbstractControlWrapper):
     def rotate(self, value: int):
         if self.action is not None:
             self.action.onRotate(value)
+
+    def clearState(self):
+        self.setLEDRingValue(0)
+        self.setLEDRingMode(0)

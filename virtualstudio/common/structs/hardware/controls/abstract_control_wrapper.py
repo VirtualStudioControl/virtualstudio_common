@@ -3,9 +3,10 @@ from virtualstudio.common.structs.action.abstract_action import *
 
 class AbstractControlWrapper:
 
-    def __init__(self):
+    def __init__(self, ident):
         super().__init__()
         self.action = None
+        self.controlID = ident
 
     def getType(self):
         return CONTROL_TYPE_NONE

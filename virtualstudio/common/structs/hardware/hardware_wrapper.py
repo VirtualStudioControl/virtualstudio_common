@@ -92,10 +92,11 @@ class HardwareWrapper:
             logger.error("Profile is None !, Device: {}".format(self.getHardwareFamily()))
             return
         self.currentProfile = profile.name
-        actions = profile.getActions()
+        actions: Dict[int, None] = profile.getActions()
         logger.debug("Binding Profile {} to {}".format(profile.name, profile.hardwareFamily))
         for control in self.controls:
-            control.setAction(None)
+            if not (control.controlID in actions.keys()):
+                control.setAction(None)
 
         for controlID in actions:
             self.controls[controlID].setAction(actions[controlID])
@@ -111,5 +112,6 @@ class HardwareWrapper:
 
         for control in self.controls:
             control.setAction(None)
+            #control.clearState()
 
     #endregion

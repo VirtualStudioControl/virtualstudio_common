@@ -8,9 +8,10 @@ LED_ON = 1
 
 class ButtonWrapper(AbstractControlWrapper):
 
-    def __init__(self, ledStateSetter: Callable[[int], bool]):
+    def __init__(self, ledStateSetter: Callable[[int], bool], ident):
         self.setLEDState = ledStateSetter
-        super(ButtonWrapper, self).__init__()
+        print(ident)
+        super(ButtonWrapper, self).__init__(ident)
 
     def getType(self):
         return CONTROL_TYPE_BUTTON
@@ -29,3 +30,6 @@ class ButtonWrapper(AbstractControlWrapper):
     def keyUp(self):
         if self.action is not None:
             self.action.onKeyUp()
+
+    def clearState(self):
+        self.setLEDState(0)
