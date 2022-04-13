@@ -10,7 +10,6 @@ class ButtonWrapper(AbstractControlWrapper):
 
     def __init__(self, ledStateSetter: Callable[[int], bool], ident):
         self.setLEDState = ledStateSetter
-        print(ident)
         super(ButtonWrapper, self).__init__(ident)
 
     def getType(self):

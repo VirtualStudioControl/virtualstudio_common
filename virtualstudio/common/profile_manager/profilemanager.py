@@ -35,6 +35,8 @@ def getOrCreateProfileSetFromFamily(hardwareFamily: str):
 
 
 def getOrCreateProfileSet(hardware: HardwareWrapper):
+    if hardware is None:
+        return None
     createProflieSet(hardware)
     return getProfileSet(hardware)
 

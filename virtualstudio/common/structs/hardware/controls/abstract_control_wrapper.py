@@ -13,6 +13,8 @@ class AbstractControlWrapper:
 
     def setAction(self, action: AbstractAction):
         if self.action == action:
+            if action is None:
+                self.clearState()
             return
         if self.action is not None:
             self.action.unregisterControlWrapper(self)

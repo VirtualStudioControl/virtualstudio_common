@@ -45,4 +45,4 @@ class RotaryEncoderWrapper(AbstractControlWrapper):
 
     def clearState(self):
         self.setLEDRingValue(0)
-        self.setLEDRingMode(0)
+        #self.setLEDRingMode(0)

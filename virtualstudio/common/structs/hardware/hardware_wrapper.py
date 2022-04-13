@@ -17,6 +17,8 @@ class HardwareWrapper:
         self.manufacturer = manufacturer
         self.identifier = identifier
 
+        self.label = "{} {}".format(manufacturer, name)
+
         self.currentProfile = PROFILE_NAME_DEFAULT
 
         self.controls: List[Any] = []
@@ -34,6 +36,7 @@ class HardwareWrapper:
             "type": self.getType(),
             "name": self.name,
             "manufacturer": self.manufacturer,
+            "label": self.label,
             "identifier": self.identifier,
             "currentProfile": self.currentProfile
         }
