@@ -18,6 +18,7 @@ class TCPClient(Thread):
         self.running = False
 
         self.sendLock = Lock()
+        self.socketLock = Lock()
 
         self.messageStub = None
 
@@ -43,6 +44,7 @@ class TCPClient(Thread):
         self.messageStub = None
         try:
             while self.running:
+
                 length = self.sock.recv(4)
                 while len(length) < 4:
                     length += self.sock.recv(4 - len(length))  # 16 kb buffer
@@ -56,6 +58,8 @@ class TCPClient(Thread):
 
         except ConnectionAbortedError:
             pass # Socket closed by another thread
+        except Exception as ex:
+            self.logger.exception(ex)
         finally:
             self.sock.close()
 
@@ -63,14 +67,15 @@ class TCPClient(Thread):
         pass
 
     def sendMessage(self, message: bytes):
-        if self.sock is not None:
-            messages = disassembleMessage(message)
-            self.sendLock.acquire()
-            try:
-                for packet in messages:
-                    self.sock.sendall(packet)
-            finally:
-                self.sendLock.release()
+        with self.socketLock:
+            if self.sock is not None:
+                messages = disassembleMessage(message)
+                self.sendLock.acquire()
+                try:
+                    for packet in messages:
+                        self.sock.sendall(packet)
+                finally:
+                    self.sendLock.release()
 
     def closeConnection(self):
         self.sock.close()

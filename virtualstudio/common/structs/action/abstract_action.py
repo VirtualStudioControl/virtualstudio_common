@@ -63,8 +63,9 @@ class AbstractAction:
             eventmanager.sendEvent(server.updateActionData(self.__info))
 
     def ensureGUIParameter(self, widgetName: str, parameter: str, value: Any, silent: bool = False):
-        if not self.hasGUIParameter(widgetName, parameter):
-            self.setGUIParameter(widgetName, parameter, value, silent)
+        #if not self.hasGUIParameter(widgetName, parameter):
+        self.setGUIParameter(widgetName, parameter, value, silent)
+        eventmanager.sendEvent(server.updateActionData(self.__info))
 
     def getGUIParameter(self, widgetName: str, parameter: str):
         return actiondatatools.getValue(self.__info.actionParams, [*actiondatatools.KEY_GUI, widgetName, parameter])
